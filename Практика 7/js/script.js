@@ -39,7 +39,7 @@ window.addEventListener('DOMContentLoaded', () => {
     showTabContent();
 
     tabsParent.addEventListener('click', (event) => {
-        const target = event.target;
+        const target = event.target; // отлавливает где был клик
 
         if (target && target.classList.contains('tabheader__item')) {
             tabs.forEach((item, i) => {
