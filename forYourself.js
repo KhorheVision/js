@@ -351,3 +351,37 @@ let end = new Date(); // помещаем следующее текущее вр
 console.log(`Время выполнения цикла равно ${end - start} миллисекунд`);
 
 Date.parse(переменная или дата); // разбирает строковое представление даты и возвращает количество миллисекунд прошедших с 1 января 1970 года 00:00:00 по UTC.
+
+/* window, document */
+
+const box = document.querySelector('.box');
+
+// получаем ширину и высоту без учёта margin, border, scroll. показывают только видимую часть
+box.clientWidth;
+box.clientHeight;
+
+// получаем ширину и высоту c учётом margin, padding, border, scroll. показывают только видимую часть
+box.offsetWidth;
+box.offsetHeight;
+
+// получаем полность ширину и высоту элемента без учёта панелей scroll
+box.scrollWidth;
+const heigth = box.scrollHeight;
+
+//вместо элемента можно прописать например document.documentElement.scrollHeight и мы получим высоту всего документа
+
+
+btn.addEventListener('click', () => {
+    box.style.heigth = heigth + 'px';
+}); // при клике на кнопку раскрывает элемент полностью на всю высоту.
+
+btn.addEventListener('click', () => {
+    console.log(box.scrollTop);
+}); // при клике на кнопку показывает сколько прокрутили от начала страницы
+
+box.getBoundingClientRect(); //позволяет получить все коордунаты которые есть у элемента
+
+const style = window.getComputedStyle(box); // позволяет получить все стили, которые установленны(применились) на данный элемент
+
+window.scrollBy(x, y); // позволяет скроллить страницу относительно текущего положения
+window.scrollTo(x, y); // позволяет скроллить страницу относительно начала страницы
