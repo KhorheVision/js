@@ -110,7 +110,6 @@ window.addEventListener('DOMContentLoaded', () => {
     /* Модальное окно Start*/
     const modal = document.querySelector('.modal');
     const modalOpen = document.querySelectorAll('[data-modal]');
-    const modalClose = document.querySelector('[data-close]');
 
     modalOpen.forEach(item => {
         item.addEventListener('click', openModal);
@@ -127,14 +126,11 @@ window.addEventListener('DOMContentLoaded', () => {
         document.body.style.overflow = '';
     }
 
-    modalClose.addEventListener('click', closeModal);
-
-
     modal.addEventListener('click', (event) => {
-        if (event.target === modal) {
+        if (event.target === modal || event.target.getAttribute('data-close') == '') {
             closeModal();
         }
-    });
+    }); //данное собитие выполнится даже в новосозданном элементе
 
     document.addEventListener('keydown', (event) => {
         if (event.code === 'Escape' && modal.style.display === 'block') {
@@ -142,7 +138,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    const modalTimerId = setTimeout(openModal, 5000);
+    const modalTimerId = setTimeout(openModal, 50000);
 
     function showModalByScroll() {
         if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
@@ -228,7 +224,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const forms = document.querySelectorAll('form');
 
     const message = {
-        loading: 'Загрузка',
+        loading: 'img/form/spinner.svg',
         success: 'Спасибо! скоро с вами свяжемся',
         failure: 'Что-то пошло не так...'
     }; // объект фраз которые будут показывать при определенном статусе загрузки данных на сервер
@@ -237,38 +233,41 @@ window.addEventListener('DOMContentLoaded', () => {
         postData(item);
     }); // берем все формы и выполняем функцию, которая будет отправлять данные из формы на сервер
 
-    function postData(form) {
-        form.addEventListener('submit', (event) => { // использует событие submit которое реагирует на отправку формы
-            event.preventDefault(); // отменяем действие браузера по умолчанию, чтобы страница не перезагружалась
+    /*     function postData(form) {
+            form.addEventListener('submit', (event) => { // использует событие submit которое реагирует на отправку формы
+                event.preventDefault(); // отменяем действие браузера по умолчанию, чтобы страница не перезагружалась
 
-            const statusMessage = document.createElement('div'); // создаём div где будет выводится информация о статусе
-            statusMessage.classList.add('status'); // добавляем класс для задания в будещем css свойств
-            statusMessage.textContent = message.loading; // будет показывать сообщение 'Загрузка'
-            form.append(statusMessage); // добавляем к форме сообщение о статусе
+                const statusMessage = document.createElement('div'); // создаём div где будет выводится информация о статусе
+                statusMessage.classList.add('status'); // добавляем класс для задания в будещем css свойств
+                statusMessage.textContent = message.loading; // будет показывать сообщение 'Загрузка'
+                form.append(statusMessage); // добавляем к форме сообщение о статусе
 
-            const request = new XMLHttpRequest();
-            request.open('POST', 'server.php'); // Прописываем метод и путь куда будем ссылаться
+                const request = new XMLHttpRequest();
+                request.open('POST', 'server.php'); // Прописываем метод и путь куда будем ссылаться
 
-            // request.setRequestHeader('Contant-type', 'multipart/form-data'); // когда используем связку XMLHttpRequest объекта и FormData, заголовок устанавливать не нужно, так как он устанавливается автоматически
-            const formData = new FormData(form); // FormData позволяет собрать данные из заполненой формы. В вёрстке обязательно в input надо прописывать атрибут name
+                // request.setRequestHeader('Contant-type', 'multipart/form-data'); // когда используем связку XMLHttpRequest объекта и FormData, заголовок устанавливать не нужно, так как он устанавливается автоматически
+                const formData = new FormData(form); // FormData позволяет собрать данные из заполненой формы. В вёрстке обязательно в input надо прописывать атрибут name
 
-            request.send(formData); // отправка данных из форма на сервер
+                request.send(formData); // отправка данных из форма на сервер
 
-            request.addEventListener('load', () => {
-                if (request.status === 200) {
-                    console.log(request.response); // смотрим, что ушло на сервер
-                    statusMessage.textContent = message.success; // когда всё отправиться изменится сообщение на 'Спасибо! скоро с вами свяжемся'
-                    form.reset(); // очищает форму
-                    setTimeout(() => {
-                        statusMessage.remove();
-                    }, 2000); // через две секунды убираем сообщение статуса
-                } else {
-                    statusMessage.textContent = message.failure; // когда призойдёт ошибка изменится сообщение на 'Что-то пошло не так...'
-                }
-            }); //отслеживаем загрузку данных на сервер, чтобы можно было реализовать определенные действия на странице. Например загрузка, благодарность и т.д.
-        }); // данная функция отправляет данные в обычном формате
+                request.addEventListener('load', () => {
+                    if (request.status === 200) {
+                        console.log(request.response); // смотрим, что ушло на сервер
+                        statusMessage.textContent = message.success; // когда всё отправиться изменится сообщение на 'Спасибо! скоро с вами свяжемся'
+                        form.reset(); // очищает форму
+                        setTimeout(() => {
+                            statusMessage.remove();
+                        }, 2000); // через две секунды убираем сообщение статуса
+                    } else {
+                        statusMessage.textContent = message.failure; // когда призойдёт ошибка изменится сообщение на 'Что-то пошло не так...'
+                    }
+                }); //отслеживаем загрузку данных на сервер, чтобы можно было реализовать определенные действия на странице. Например загрузка, благодарность и т.д.
+            }); // данная функция отправляет данные в обычном формате
 
-    } // функция которая будет отвечать за постинг данных
+        } // функция которая будет отвечать за постинг данных */
+
+
+
 
     // function postData(form) {
     //     form.addEventListener('submit', (event) => {
@@ -311,5 +310,68 @@ window.addEventListener('DOMContentLoaded', () => {
     //     });
 
     // }  // данная функция отправляет данные в формате JSON
+
+
+    function postData(form) {
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            let statusMessage = document.createElement('img'); //создаём элемент img
+            statusMessage.src = message.loading; // передаём ссылку на картинку в атрибут src
+            statusMessage.style.cssText = `
+                display: block;
+                margin: 0 auto;
+                width: 50px;
+                height: 50px;
+            `;
+
+            form.insertAdjacentElement('afterend', statusMessage); // добавляем нашу картинку загрузки после формы
+
+            const request = new XMLHttpRequest();
+            request.open('POST', 'server.php');
+
+            const formData = new FormData(form);
+
+            request.send(formData);
+
+            request.addEventListener('load', () => {
+                if (request.status === 200) {
+                    console.log(request.response);
+                    showThanksModal(message.success);
+                    form.reset();
+                    statusMessage.remove();
+                } else {
+                    showThanksModal(message.failure);
+                }
+            });
+        });
+
+    }
+
+    function showThanksModal(message) {
+        const prevModalDialog = document.querySelector('.modal__dialog');
+
+        prevModalDialog.classList.add('hide');
+        openModal();
+
+        const thanksModal = document.createElement('div');
+        thanksModal.classList.add('modal__dialog');
+        thanksModal.innerHTML = `
+            <div class="modal__content">
+                <div class="modal__close" data-close>×</div>
+                <div class="modal__title">${message}</div>
+            </div>
+        `;
+
+        document.querySelector('.modal').append(thanksModal); // добавляем созданное модальное окно со статусом
+        setTimeout(() => {
+            thanksModal.remove();
+            prevModalDialog.classList.add('show');
+            prevModalDialog.classList.remove('hide');
+            closeModal();
+        }, 4000); // через 4 секунды будем убирать thanksModal, чтобы обратно отобразить форму. также закрываем модальное окно
+    } // функция которая добавит красоты после отправки формы
     /* Использование AJAX и XMLHttpRequest для отправки формы End*/
+
+
 });
