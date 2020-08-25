@@ -223,4 +223,93 @@ window.addEventListener('DOMContentLoaded', () => {
         'menu__item'
     ).render();
     /* Использование Class для карточек Start*/
+
+    /* Использование AJAX и XMLHttpRequest для отправки формы Start*/
+    const forms = document.querySelectorAll('form');
+
+    const message = {
+        loading: 'Загрузка',
+        success: 'Спасибо! скоро с вами свяжемся',
+        failure: 'Что-то пошло не так...'
+    }; // объект фраз которые будут показывать при определенном статусе загрузки данных на сервер
+
+    forms.forEach(item => {
+        postData(item);
+    }); // берем все формы и выполняем функцию, которая будет отправлять данные из формы на сервер
+
+    function postData(form) {
+        form.addEventListener('submit', (event) => { // использует событие submit которое реагирует на отправку формы
+            event.preventDefault(); // отменяем действие браузера по умолчанию, чтобы страница не перезагружалась
+
+            const statusMessage = document.createElement('div'); // создаём div где будет выводится информация о статусе
+            statusMessage.classList.add('status'); // добавляем класс для задания в будещем css свойств
+            statusMessage.textContent = message.loading; // будет показывать сообщение 'Загрузка'
+            form.append(statusMessage); // добавляем к форме сообщение о статусе
+
+            const request = new XMLHttpRequest();
+            request.open('POST', 'server.php'); // Прописываем метод и путь куда будем ссылаться
+
+            // request.setRequestHeader('Contant-type', 'multipart/form-data'); // когда используем связку XMLHttpRequest объекта и FormData, заголовок устанавливать не нужно, так как он устанавливается автоматически
+            const formData = new FormData(form); // FormData позволяет собрать данные из заполненой формы. В вёрстке обязательно в input надо прописывать атрибут name
+
+            request.send(formData); // отправка данных из форма на сервер
+
+            request.addEventListener('load', () => {
+                if (request.status === 200) {
+                    console.log(request.response); // смотрим, что ушло на сервер
+                    statusMessage.textContent = message.success; // когда всё отправиться изменится сообщение на 'Спасибо! скоро с вами свяжемся'
+                    form.reset(); // очищает форму
+                    setTimeout(() => {
+                        statusMessage.remove();
+                    }, 2000); // через две секунды убираем сообщение статуса
+                } else {
+                    statusMessage.textContent = message.failure; // когда призойдёт ошибка изменится сообщение на 'Что-то пошло не так...'
+                }
+            }); //отслеживаем загрузку данных на сервер, чтобы можно было реализовать определенные действия на странице. Например загрузка, благодарность и т.д.
+        }); // данная функция отправляет данные в обычном формате
+
+    } // функция которая будет отвечать за постинг данных
+
+    // function postData(form) {
+    //     form.addEventListener('submit', (event) => {
+    //         event.preventDefault();
+
+    //         const statusMessage = document.createElement('div');
+    //         statusMessage.classList.add('status');
+    //         statusMessage.textContent = message.loading;
+    //         'Загрузка'
+    //         form.append(statusMessage);
+
+    //         const request = new XMLHttpRequest();
+    //         request.open('POST', 'server.php');
+
+    //         request.setRequestHeader('Contant-type', 'application/json'); // задаём заголовок, чтобы сказать что будет JSON
+    //         const formData = new FormData(form);
+
+    //         const object = {}; // создаём пустой объект
+    //         // перебер formData c помощью цикла forEach и поместим данные в пустой объект, который создали выше
+    //         formData.forEach(function (value, key) {
+    //             object[key] = value;
+    //         }); // Получаем новый обычный объект с данными
+
+    //         const jsonData = JSON.stringify(Object); // превращаем обычный объект в json-объект, который можно отправить на сервер
+
+    //         request.send(jsonData);
+
+    //         request.addEventListener('load', () => {
+    //             if (request.status === 200) {
+    //                 console.log(request.response);
+    //                 statusMessage.textContent = message.success;
+    //                 form.reset();
+    //                 setTimeout(() => {
+    //                     statusMessage.remove();
+    //                 }, 2000);
+    //             } else {
+    //                 statusMessage.textContent = message.failure;
+    //             }
+    //         });
+    //     });
+
+    // }  // данная функция отправляет данные в формате JSON
+    /* Использование AJAX и XMLHttpRequest для отправки формы End*/
 });
