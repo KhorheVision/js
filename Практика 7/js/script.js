@@ -327,23 +327,48 @@ window.addEventListener('DOMContentLoaded', () => {
 
             form.insertAdjacentElement('afterend', statusMessage); // добавляем нашу картинку загрузки после формы
 
-            const request = new XMLHttpRequest();
-            request.open('POST', 'server.php');
+            // const request = new XMLHttpRequest();
+            // request.open('POST', 'server.php');
 
             const formData = new FormData(form);
 
-            request.send(formData);
+            // const object = {}; // создаём пустой объект
+            // // перебер formData c помощью цикла forEach и поместим данные в пустой объект, который создали выше
+            // formData.forEach(function (value, key) {
+            //     object[key] = value;
+            // }); // Получаем новый обычный объект с данными
 
-            request.addEventListener('load', () => {
-                if (request.status === 200) {
-                    console.log(request.response);
+            // request.send(formData);
+            fetch('server.php', {
+                    method: 'POST',
+                    // headers: {
+                    //     'Contant-type': 'application/json'
+                    // }, // не пишем так как отправляем formData. Если ниже прописываем JSON.stringify(Object), то надо раскомментировать
+                    body: formData // прописываем JSON.stringify(Object) если хотим отрпавить json объект
+                })
+                .then(data => data.text()) // превращаем ответ в обычный текст
+                .then(data => {
+                    console.log(data);
                     showThanksModal(message.success);
-                    form.reset();
                     statusMessage.remove();
-                } else {
+                })
+                .catch(() => {
                     showThanksModal(message.failure);
-                }
-            });
+                })
+                .finally(() => {
+                    form.reset();
+                });
+
+            // request.addEventListener('load', () => {
+            //     if (request.status === 200) {
+            //         console.log(request.response);
+            //         showThanksModal(message.success);
+            //         form.reset();
+            //         statusMessage.remove();
+            //     } else {
+            //         showThanksModal(message.failure);
+            //     }
+            // });
         });
 
     }
