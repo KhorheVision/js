@@ -583,12 +583,28 @@ window.addEventListener("DOMContentLoaded", () => {
         slide.style.width = width;
     });
 
+    function deleteNotDigits(str) {
+        return +str.replace(/\D/g, '');
+    }
+
     next.addEventListener('click', () => {
-        if (offset === +width.slice(0, width.length - 2) * (slides.length - 1)) {
+        // if (offset === +width.slice(0, width.length - 2) * (slides.length - 1)) {
+        //     offset = 0;
+        // } else {
+        //     offset += +width.slice(0, width.length - 2);
+        // } // можно использовать slice() с помощью которого мы отсекаем 2 последних символа, чтобы получить число
+
+        // if (offset === +width.replace(/\D/g, '') * (slides.length - 1)) {
+        //     offset = 0;
+        // } else {
+        //     offset += +width.replace(/\D/g, ''); //позволяет отсечь от цифр не нужные символы, чтобы получить число с которым можно дальше работать
+        // }
+
+        if (offset === deleteNotDigits(width) * (slides.length - 1)) {
             offset = 0;
         } else {
-            offset += +width.slice(0, width.length - 2);
-        }
+            offset += deleteNotDigits(width);
+        } // также можно использовать отдельно написаную функцию
 
         slidesField.style.transform = `translateX(-${offset}px)`;
 
@@ -613,9 +629,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
     prev.addEventListener('click', () => {
         if (offset === 0) {
-            offset = +width.slice(0, width.length - 2) * (slides.length - 1);
+            offset = deleteNotDigits(width) * (slides.length - 1);
         } else {
-            offset -= +width.slice(0, width.length - 2);
+            offset -= deleteNotDigits(width);
         }
 
         slidesField.style.transform = `translateX(-${offset}px)`;
@@ -670,7 +686,7 @@ window.addEventListener("DOMContentLoaded", () => {
             const slideTo = event.target.getAttribute('data-slide-to');
 
             slideIndex = slideTo;
-            offset = +width.slice(0, width.length - 2) * (slideTo - 1);
+            offset = deleteNotDigits(width) * (slideTo - 1);
 
             slidesField.style.transform = `translateX(-${offset}px)`;
 
