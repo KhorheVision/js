@@ -804,3 +804,51 @@ const newArr = Object.entries(obj)
 // У слова async один простой смысл: эта функция всегда возвращает промис.
 // ключевое слово async перед функцией гарантирует, что эта функция в любом случае вернёт промис.
 // ключевое слово – await, которое можно использовать только внутри async-функций.
+
+
+/* localStorage */
+
+// localStorage позволяет сохранять данные на сайтах без Базы данных и работы с сервером, также хохраняет данные после перезагрузки страницы или закрытия браузера
+
+// localStorage это объект который хранит ключ: значение
+// localStorage объект существует в пределах одного домена и данные хранятся локально. вмешается в него 5 мегабайт информации
+
+localStorage.setItem('number', 5); // принимает 2 аргумента. 1 аргумент это ключ, 2 аргумент это занчение. когда выполниться то в localStorage запишеться 2 аргумента. если такой ключ уже есть, то он перезапишется
+localStorage.getItem('number'); // позволяет запросить из localStorage ключ, чтобы получить его значение. прописывать можно 1 аргумент и это ключ
+localStorage.removeItem('number'); // позволяет удалить из localStorage ключ и значение. принимает название ключа
+localStorage.clear(); // очищает полностью локально хранилище и не принимает аргументов
+
+// Пример. Хотим сохранять значкние checkbox и какой цвет формы выбран
+const checkbox = document.querySelector('#checkbox');
+const form = document.querySelector('form');
+const change = document.querySelector('#color');
+
+if (localStorage.getItem('isChecked')) {
+    checkbox.checked = true;
+} // проверяем есть ли в localStorage isChecked. если да то при перезагрузке страницы у него будет значение true
+
+if (localStorage.getItem('bg') === 'changed') {
+    form.stile.backgroundColor = 'red';
+} // проверяем есть ли в localStorage bg со значением changed. если да то при перезагрузке страницы backgroundColor будет red
+
+checkbox.addEventListener('change', () => {
+    localStorage.setItem('isChecked', true);
+}); // записывает в localStorage isChecked со значением true
+
+change.addEventListener('click', () => {
+    if (localStorage.getItem('bg') === 'changed') {
+        localStorage.removeItem('bg');
+        form.stile.backgroundColor = '#fff';
+    } else {
+        localStorage.setItem('bg', 'changed');
+        form.stile.backgroundColor = 'red';
+    }
+}); // записывает в localStorage bg со значением changed или удаляет его и меняет цвет фона формы при клике
+
+const persone = {
+    name: 'Alex',
+    age: 25
+} // допустим хотим сохранить объект об персонаже в localStorage
+
+const serializedPersone = JSON.stringify(persone); // переводим в json формат
+localStorage.setItem('alex', serializedPersone); // отправляем в localStorage ключ alex со значением serializedPersone в котором json объект. также можем из localStorage запросить json объект и работать с ним
