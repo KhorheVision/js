@@ -932,3 +932,119 @@ const obj = {
 
 obj.nameAndAge; // возвращает то, что мы попросили его вернуть в фигурных скобках
 obj.nameAndAge = 30; // позволяет заменять/устанавливать значения свойст в объекте.
+
+
+/* Инкапсуляция */
+
+// Инкапсуляция - это оделение и сокрытие свойств и методов объекта (в общем скрывает то, что не хотим чтобы меняли). В js это можно только имитировать.
+
+// примеры
+// функции-конструкторы
+function User(name, age) {
+    this.name = name;
+    this.age = age;
+
+    this.say = function () {
+        console.log(`Имя: ${this.name}, возраст: ${this.age}`);
+    }
+}
+
+
+const ivan = new User('Ivan', 25);
+// наже можем получить доступ с свойствам и это нормальное поведение
+console.log(ivan.name);
+console.log(ivan.age);
+
+ivan.age = 30; // также мы можем изменить свойство. и это может быть проблемой в будущем
+
+
+
+//Прописываем Инкапсуляцию с псомощью создания переменной внутри конструктора
+function User(name, age) {
+    this.name = name;
+    let userAge = age;
+
+    this.say = function () {
+        console.log(`Имя: ${this.name}, возраст: ${userAge}`);
+    }
+
+    this.getAge = function () {
+        return userAge;
+    } // метод который позволяет обратится к переменной userAge и вернуть значение
+
+    this.setAge = function (age) {
+        if (typeof age === 'number' && age > 0 && age < 110) {
+            userAge = age;
+        } else {
+            console.log('недопустимое значение');
+        }
+    } // позволяет изменить переменную userAge из вне и проверить введёное значение из вне
+}
+
+ivan.userAge = 30; // если попробуем изменить значение таким способом то выдаст undefined и значение не поменяется
+ivan.getAge(); // позволяет получить значение userAge
+ivan.setAge(100); // позволяет сменить занчение userAge, если введённое число или символ удовлетворяет условию
+
+
+// Инкапсуляция в классах
+class User {
+    constructor(name, age) {
+        this.name = name;
+        // let userAge = age; // доступа к ней внутри класса не будет
+        // this.userAge = age; // но к сажелению это свойство теперь публично
+        this._age = age; // используя синкакцис для свойства. Это _ перед названием свойства. Это не синтаксис языка, а соглашение программистов и говорит им, что такие свойста и методы не должны быть вызваны из вне. но есть программисты которые об этом не знают
+    }
+
+    say() {
+        console.log(`Имя: ${this.name}, возраст: ${this._age}`);
+    }
+
+    get age() {
+        return this._age;
+    } // используем аксессор get
+
+    set age(age) {
+        if (typeof age === 'number' && age > 0 && age < 110) {
+            this._age = age;
+        } else {
+            console.log('недопустимое значение');
+        }
+    } // используем аксессор set
+}
+
+
+// Экспериментальная Инкапсуляция
+class User {
+    constructor(name, age) {
+        this.name = name;
+        this._age = age;
+    }
+
+    #surname = 'Zhidkov'; // создали приватное свойство с помощью #, которое можем использовать только внутри класа.
+
+    say = () => {
+        console.log(`Имя: ${this.name} ${this.#surname}, возраст: ${this._age}`); // здесь ещё обращаемся к свойству surname
+    } // можем задать стрелочные функции, чтобы не терять контекст в некоторых случаях. this всегда будет ссыласться экземплят объекта
+
+    get age() {
+        return this._age;
+    }
+
+    set age(age) {
+        if (typeof age === 'number' && age > 0 && age < 110) {
+            this._age = age;
+        } else {
+            console.log('недопустимое значение');
+        }
+    }
+
+    get surname() {
+        return this.#surname;
+    }
+
+    set age(surname) {
+        this.#surname = surname;
+    }
+}
+const egor = new User('Egor', 25);
+console.log(egor.surname); // чтобы обратиться к свойству надо писать без #
